@@ -9,22 +9,20 @@ function error() {
 }
 function submitform(event) {
   event.preventDefault();
-  if (email.value == "" || nname.value == "" || phone == "") {
+  if (email.value == "" || username.value == "" || phone == "") {
     error();
   } else {
     var myObj = {
-      Email: email.value,
-      nname: nname.value,
-      tforcall: tforcall.value,
+      email: email.value,
+      username: username.value,
+      time: time.value,
       phone: phone.value,
     };
     // localStorage.setItem(email.value,JSON.stringify(myObj));
     axios
-      .post(
-        "https://crudcrud.com/api/d9464c8bdff243cabd8c53bed521d529/appointdata",
-        myObj
-      )
+      .post("http://localhost:3000/bookcall/appointments", myObj)
       .then((response) => {
+        console.log(response);
         const ebtn = document.createElement("button");
         ebtn.className = "ebtn";
         ebtn.innerText = "edit";
@@ -37,14 +35,14 @@ function submitform(event) {
         const items = document.getElementById("items");
         const bd = items.parentElement;
         ul.innerHTML =
-          "Email : " +
-          response.data.Email +
+          "email : " +
+          response.data.email +
           "<br>" +
           "Name: " +
-          response.data.nname +
+          response.data.username +
           "<br>" +
           "Time for call: " +
-          response.data.tforcall +
+          response.data.time +
           "<br>" +
           "Phone : " +
           response.data.phone +
@@ -54,27 +52,27 @@ function submitform(event) {
         ul.className = "items";
         bd.appendChild(ul);
         dbtn.onclick = () => {
-          // localStorage.removeItem(myObj.Email)
+          // localStorage.removeItem(myObj.email)
           bd.removeChild(ul);
-          deletefromserver(response.data._id);
+          deletefromserver(response.data.id);
         };
         ebtn.onclick = () => {
-          email.value = myObj.Email;
-          nname.value = myObj.nname;
-          tforcall.value = myObj.tforcall;
+          email.value = myObj.email;
+          username.value = myObj.username;
+          time.value = myObj.time;
           phone.value = myObj.phone;
-          deletefromserver(response.data._id);
+          deletefromserver(response.data.id);
           bd.removeChild(ul);
           // patchinserver(response.data._id)
         };
+        email.value = "";
+        username.value = "";
+        time.value = "";
+        phone.value = "";
       })
       .catch((err) => {
         console.log(err);
       });
-    email.value = "";
-    nname.value = "";
-    tforcall.value = "";
-    phone.value = "";
   }
 }
 
@@ -82,8 +80,8 @@ var div = document.getElementById("err");
 var form = document.getElementById("my-form");
 var btn = document.getElementById("button");
 var email = document.getElementById("memail");
-var nname = document.getElementById("name");
-var tforcall = document.getElementById("tforcall");
+var username = document.getElementById("name");
+var time = document.getElementById("time");
 var phone = document.getElementById("phone");
 // console.log(btn)
 btn.addEventListener("click", submitform);
@@ -92,12 +90,10 @@ btn.addEventListener("click", submitform);
 var data;
 document.addEventListener("DOMContentLoaded", () => {
   axios
-    .get(
-      "https://crudcrud.com/api/d9464c8bdff243cabd8c53bed521d529/appointdata"
-    )
+    .get("http://localhost:3000/bookcall/appointments")
     .then((response) => {
       // data=response;
-      // console.log(data)
+      console.log(response.data);
 
       load(response.data);
     })
@@ -112,7 +108,7 @@ function load(data) {
     // var valu = JSON.parse(localStorage.getItem(key));
     let dat = data[i];
     // console.log("Key:", key, "Value:", valu);
-    // console.log(valu.Email)
+    // console.log(valu.email)
     const ebtn = document.createElement("button");
     ebtn.className = "ebtn";
     ebtn.innerText = "edit";
@@ -126,14 +122,14 @@ function load(data) {
     const bd = items.parentElement;
 
     ul.innerHTML =
-      "Email : " +
-      dat.Email +
+      "email : " +
+      dat.email +
       "<br>" +
       "Name: " +
-      dat.nname +
+      dat.username +
       "<br>" +
       "Time for call: " +
-      dat.tforcall +
+      dat.time +
       "<br>" +
       "Phone : " +
       dat.phone +
@@ -143,19 +139,19 @@ function load(data) {
     ul.className = "items";
     bd.appendChild(ul);
     dbtn.onclick = () => {
-      // localStorage.removeItem(data.Email)
+      // localStorage.removeItem(data.email)
       bd.removeChild(ul);
       // console.log(valu._id)
 
-      deletefromserver(dat._id);
+      deletefromserver(dat.id);
     };
     //adding functionality to editbutton
     ebtn.onclick = () => {
-      email.value = dat.Email;
-      nname.value = dat.nname;
-      tforcall.value = dat.tforcall;
+      email.value = dat.email;
+      username.value = dat.username;
+      time.value = dat.time;
       phone.value = dat.phone;
-      deletefromserver(dat._id);
+      deletefromserver(dat.id);
       bd.removeChild(ul);
       // patchinserver(valu._id)
     };
@@ -163,7 +159,7 @@ function load(data) {
 }
 
 function deletefromserver(id) {
-  let lin = `https://crudcrud.com/api/d9464c8bdff243cabd8c53bed521d529/appointdata/${id}`;
+  let lin = `http://localhost:3000/bookcall/appointments/${id}`;
   axios
     .delete(lin)
     .then((response) => {})
@@ -172,7 +168,7 @@ function deletefromserver(id) {
     });
 }
 // function patchinserver(id){
-//     let lin=`https://crudcrud.com/api/d9464c8bdff243cabd8c53bed521d529/appointdata/${id}`
+//     let lin=`https://crudcrud.com/api/aabb8976e96b40f793ac00423b6adf9e/appointdata/${id}`
 //     axios.put(lin)
 //         .then((response)=>{
 //             console.log(response)
